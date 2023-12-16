@@ -17,26 +17,6 @@ class Extension {
             val byteArray = ByteArray(3)
 
 
-//            val bytes = ByteArray(3)
-////            bytes[0] = ((value ushr 24) and 0xFF).toByte()
-//            if(value <= 0xFF){
-//                val bytes = ByteArray(1)
-//                bytes[0] = (value and 0xFF).toByte()
-//                return bytes
-//            }else if(value <= 0xFFFF){
-//                val bytes = ByteArray(2)
-//                bytes[0] = ((value ushr 8) and 0xFF).toByte()
-//                bytes[1] = (value and 0xFF).toByte()
-//                return bytes
-//            }else{
-//                val bytes = ByteArray(3)
-//                bytes[0] = ((value ushr 16) and 0xFF).toByte()
-//                bytes[1] = ((value ushr 8) and 0xFF).toByte()
-//                bytes[2] = (value and 0xFF).toByte()
-//
-//                return bytes
-//            }
-
             val bytes = ByteArray(3)
             bytes[0] = ((value ushr 16) and 0xFF).toByte()
             bytes[1] = ((value ushr 8) and 0xFF).toByte()

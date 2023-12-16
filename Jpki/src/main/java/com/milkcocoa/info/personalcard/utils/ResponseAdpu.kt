@@ -5,7 +5,7 @@ import com.hierynomus.asn1.encodingrules.der.DERDecoder
 import java.io.ByteArrayInputStream
 import java.lang.Exception
 
-class ResponseAdpu(val rawData: ByteArray) {
+data class ResponseAdpu(val rawData: ByteArray) {
     lateinit var data: ByteArray
     var SW1: Byte = 0x00
     var SW2: Byte = 0x00
@@ -27,7 +27,7 @@ class ResponseAdpu(val rawData: ByteArray) {
 
 
 
-    class ASN1Frame(
+    data class ASN1Frame(
         val tag: Int,
         val length: Int,
         val frameSize: Int,

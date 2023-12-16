@@ -1,6 +1,6 @@
 package com.milkcocoa.info.personalcard.utils
 
-class CommandAdpu(
+data class CommandAdpu(
     val CLA: Byte,
     val INS: Byte,
     val P1: Byte,

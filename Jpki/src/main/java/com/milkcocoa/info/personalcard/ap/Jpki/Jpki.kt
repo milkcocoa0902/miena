@@ -18,9 +18,7 @@ import java.security.cert.X509Certificate
 
 
 class Jpki {
-
-
-    fun<T> IsoDep.critical(action: (IsoDep)->T): T{
+    private fun<T> IsoDep.critical(action: (IsoDep)->T): T{
         connect()
         val result = action(this)
         close()
@@ -28,18 +26,23 @@ class Jpki {
     }
 
 
-    fun selectJpki(tag: Tag): Boolean{
-        return IsoDep.get(tag).critical {isoDep->
-            val selectFileAdpu = CommandAdpu(
-                CLA = 0x00,
-                INS = 0xA4.toByte(),
-                P1 = 0x04,
-                P2 = 0x0C,
-                Lc = byteArrayOf(0x0A),
-                DF = byteArrayOf(0xD3.toByte(), 0x92.toByte(), 0xF0.toByte(), 0x00, 0x26, 0x01, 0x00, 0x00, 0x00, 0x01))
-            return@critical Adpu(isoDep).transceive(selectFileAdpu).validate()
-        }
+    /**
+     * @brief : send command to card for transition into JPKI mode
+     * @param tag[Tag]: NFC card object
+     * @return [Boolean] true if success else failure
+     */
+private fun selectJpki(tag: Tag): Boolean{
+    return IsoDep.get(tag).critical {isoDep->
+        val selectFileAdpu = CommandAdpu(
+            CLA = 0x00,
+            INS = 0xA4.toByte(),
+            P1 = 0x04,
+            P2 = 0x0C,
+            Lc = byteArrayOf(0x0A),
+            DF = byteArrayOf(0xD3.toByte(), 0x92.toByte(), 0xF0.toByte(), 0x00, 0x26, 0x01, 0x00, 0x00, 0x00, 0x01))
+        return@critical Adpu(isoDep).transceive(selectFileAdpu).validate()
     }
+}
 
 
     private fun selectCertificateAuth(tag: Tag): Boolean{
@@ -142,21 +145,21 @@ class Jpki {
 
 
     // 認証用PINのロックを解除する
-    fun verifyAuth(tag: Tag?, pin: Pin){
-        requireNotNull(tag)
+fun verifyAuth(tag: Tag?, pin: Pin){
+    requireNotNull(tag)
 
-        IsoDep.get(tag).critical {isoDep->
-            val adpu = Adpu(isoDep)
-            val selectFile = CommandAdpu(CLA = 0x00, INS = 0xA4.toByte(), P1 = 0x02, P2 = 0x0C, Lc = byteArrayOf(0x02), DF = byteArrayOf(0x00, 0x18))
-            adpu.transceive(selectFile)
+    IsoDep.get(tag).critical {isoDep->
+        val adpu = Adpu(isoDep)
+        val selectFile = CommandAdpu(CLA = 0x00, INS = 0xA4.toByte(), P1 = 0x02, P2 = 0x0C, Lc = byteArrayOf(0x02), DF = byteArrayOf(0x00, 0x18))
+        adpu.transceive(selectFile)
 
 
-            val verifyAdpu = CommandAdpu(CLA = 0x00, INS = 0x20, P1 = 0x00, P2 = 0x80.toByte(), Lc = byteArrayOf(0x04), DF = pin.toByteArray())
-            val response = adpu.transceive(verifyAdpu)
+        val verifyAdpu = CommandAdpu(CLA = 0x00, INS = 0x20, P1 = 0x00, P2 = 0x80.toByte(), Lc = byteArrayOf(0x04), DF = pin.toByteArray())
+        val response = adpu.transceive(verifyAdpu)
 
-            Log.i("JPKI", response.rawData.contentToString())
-        }
+        Log.i("JPKI", response.rawData.contentToString())
     }
+}
 
 
     fun verifyCountRemains(tag: Tag): Int{
@@ -171,6 +174,8 @@ class Jpki {
 
             Log.i("JPKI", response.toString())
 
+            // ロックまでの残回数を問い合わせるとき、コマンドの終端が変化する
+            // 終端が[0x63, 0x6?]になり、?が残回数
             if(response.validate(sw1 = 0x63, sw2 = 0xC3.toByte())){
                 return@critical 3
             }else if(response.validate(sw1 = 0x63, sw2 = 0xC2.toByte())){
@@ -182,7 +187,6 @@ class Jpki {
             }else{
                 throw NoVerifyCountRemainsException("カードがロックされています")
             }
-
         }
     }
 }

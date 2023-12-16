@@ -39,7 +39,7 @@ import kotlin.coroutines.suspendCoroutine
 @RequiresApi(Build.VERSION_CODES.N)
 class MainActivity: AppCompatActivity(){
     lateinit var jpki: Jpki
-    var nfcCard: NfcAdapter? = null
+    val nfcCard: NfcAdapter by lazy { NfcAdapter.getDefaultAdapter(applicationContext) }
 
     class SelectFile(val activity: AppCompatActivity, val mime: String = "*/*") {
         var continuation: CancellableContinuation<Uri?>? = null
@@ -78,6 +78,8 @@ class MainActivity: AppCompatActivity(){
 
     lateinit var selectFile: SelectFile
     lateinit var createDocument: CreateDocument
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -87,17 +89,14 @@ class MainActivity: AppCompatActivity(){
 
         createDocument = CreateDocument(this)
 
-
-        nfcCard = NfcAdapter.getDefaultAdapter(applicationContext)
-
         val progressDialog = ProgressDialog(this).also {
             it.setMessage("マイナンバーカードをかざしてください")
         }
 
 
 
+        // 証明書を取得する
         findViewById<Button>(R.id.read_certificate).also { readCertificace->
-
             readCertificace.setOnClickListener {
                 lifecycleScope.launch {
 
@@ -106,7 +105,10 @@ class MainActivity: AppCompatActivity(){
                         lifecycleScope.launch {
 
                             kotlin.runCatching {
+                                // JPKI APを選択して
                                 jpki.prepare(tag = tag)
+
+                                // 証明書を読み取る
                                 val der = jpki.readCertificateAuth(tag = tag)
 
                                 createDocument.launch("jpki.der")?.let { contentResolver.openOutputStream(it) }?.use { outputStream->
@@ -123,14 +125,14 @@ class MainActivity: AppCompatActivity(){
                                     }
                                 }
                             }.also {
-                                nfcCard?.disableReaderMode(this@MainActivity)
+                                nfcCard.disableReaderMode(this@MainActivity)
 
                                 progressDialog.dismiss()
                             }
 
                         }
                     }.let { nfcCallback->
-                        nfcCard?.enableReaderMode(this@MainActivity, nfcCallback, NfcAdapter.FLAG_READER_NFC_B or NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK, null)
+                        nfcCard.enableReaderMode(this@MainActivity, nfcCallback, NfcAdapter.FLAG_READER_NFC_B or NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK, null)
                     }
                 }
             }
@@ -185,13 +187,13 @@ class MainActivity: AppCompatActivity(){
                                 }
                             }.also {
 
-                                nfcCard?.disableReaderMode(this@MainActivity)
+                                nfcCard.disableReaderMode(this@MainActivity)
                                 progressDialog.dismiss()
                             }
 
                         }
                     }.let { nfcCallback->
-                        nfcCard?.enableReaderMode(this@MainActivity, nfcCallback, NfcAdapter.FLAG_READER_NFC_B or NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK, null)
+                        nfcCard.enableReaderMode(this@MainActivity, nfcCallback, NfcAdapter.FLAG_READER_NFC_B or NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK, null)
                     }
                 }
             }
@@ -239,11 +241,14 @@ class MainActivity: AppCompatActivity(){
         }
     }
 
-    suspend fun getPinCode(): Pin?{
+    /**
+     * request 4 digit of pin-code
+     */
+    private suspend fun getPinCode(): Pin?{
         return suspendCoroutine { continuation ->
 
             val editText = AppCompatEditText(this).apply {
-                inputType = InputType.TYPE_CLASS_NUMBER
+                inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
                 isSingleLine = true
                 maxLines = 1
             }
@@ -270,6 +275,7 @@ class MainActivity: AppCompatActivity(){
                 }
                 .setNegativeButton("キャンセル") { dialog, _ ->
                     dialog.dismiss()
+                    continuation.resume(null)
                 }
                 .create()
                 .show()
@@ -284,6 +290,6 @@ class MainActivity: AppCompatActivity(){
     override fun onPause() {
         super.onPause()
 
-        nfcCard?.disableReaderMode(this)
+        nfcCard.disableReaderMode(this)
     }
 }
