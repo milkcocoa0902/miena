@@ -28,7 +28,7 @@ class DialogFragmentLongPinCode(private val listener: DialogFragmentLongPinCodeL
             .apply {
                 findViewById<Button>(R.id.ok).setOnClickListener {
                     dismiss()
-                    listener.onComplete(findViewById<TextInputEditText>(R.id.pin_code).text?.toString() ?: "")
+                    listener.onComplete(findViewById<TextInputEditText>(R.id.pin_code).text?.toString()?.uppercase() ?: "")
                 }
                 findViewById<Button>(R.id.cancel).setOnClickListener {
                     dismiss()
