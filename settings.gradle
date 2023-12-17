@@ -13,6 +13,7 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "JpkiFileShare"
+rootProject.name = "Miena"
 include ':app'
-include ':Jpki'
+include ':miena'
+include ':miena-jpki'

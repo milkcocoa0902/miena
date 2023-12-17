@@ -10,13 +10,19 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.CryptFileShare" >
-        <activity android:name="com.milkcocoa.info.jpkifileshare.MainActivity"
+        <activity android:name=".LaunchActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+                android:name=".JpkiAuthActivity"
+                android:exported="false" />
+        <activity
+                android:name=".JpkiSignActivity"
+                android:exported="false" />
     </application>
 
 </manifest>
