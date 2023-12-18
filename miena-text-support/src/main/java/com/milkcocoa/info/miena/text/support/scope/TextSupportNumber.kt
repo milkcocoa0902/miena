@@ -4,6 +4,7 @@ import android.nfc.Tag
 import com.milkcocoa.info.miena.MienaTextSupportNumber
 import com.milkcocoa.info.miena.adpu.Adpu
 import com.milkcocoa.info.miena.adpu.CommandAdpu
+import com.milkcocoa.info.miena.entity.BasicAttrs
 import com.milkcocoa.info.miena.entity.PersonalNumber
 import com.milkcocoa.info.miena.exception.IllegalTagException
 import com.milkcocoa.info.miena.pin.MyNumberPin
@@ -22,6 +23,14 @@ import com.milkcocoa.info.miena.util.IsoDepUtil.isoDep
  *
  */
 class TextSupportNumber: TextSupport<MyNumberPin>(), MienaTextSupportNumber {
+    override fun readBasicAttrs(tag: Tag): BasicAttrs {
+        TODO("Not yet implemented")
+    }
+
+    override fun selectBasicAttrs(tag: Tag) {
+        TODO("Not yet implemented")
+    }
+
     override fun readPersonalNumber(tag: Tag): PersonalNumber {
         return tag.isoDep().critical {isoDep->
             val adpu = Adpu(isoDep)

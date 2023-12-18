@@ -13,13 +13,11 @@ import java.security.cert.X509Certificate
 /**
  *
  */
-interface MiinaJpki<PIN : Pin> {
+interface MiinaJpki<PIN : Pin> : Miena<PIN>{
     fun selectJpki(tag: Tag)
     fun selectCertificatePublicKey(tag: Tag)
     fun readCertificatePublicKey(tag: Tag): X509Certificate
     fun computeSignature(tag: Tag, data: ByteArray): ByteArray
     fun selectCertificatePin(tag: Tag)
     fun selectCertificatePrivateKey(tag: Tag)
-    fun verifyPin(tag: Tag?, pin: PIN)
-    fun verifyCountRemains(tag: Tag): Int
 }

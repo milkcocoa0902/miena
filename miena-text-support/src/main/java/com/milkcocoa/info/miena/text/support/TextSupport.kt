@@ -86,17 +86,12 @@ abstract class TextSupport<PIN: Pin>: MienaTextSupport<PIN> {
 
             // ロックまでの残回数を問い合わせるとき、コマンドの終端が変化する
             // 終端が[0x63, 0x6?]になり、?が残回数
-            if(response.validate(sw1 = 0x63, sw2 = 0xC3.toByte())){
-                return@critical 3
-            }else if(response.validate(sw1 = 0x63, sw2 = 0xC2.toByte())){
-                return@critical 2
-            }else if (response.validate(sw1 = 0x63, sw2 = 0xC1.toByte())){
-                return@critical 1
-            }else if(response.validate(sw1 = 0x63, sw2 = 0xC0.toByte())){
-                throw NoVerifyCountRemainsException("カードがロックされています")
-            }else{
-                throw NoVerifyCountRemainsException("カードがロックされています")
+            for(cnt in 1.until(15)){
+                if(response.validate(sw1 = 0x63, sw2 = (0xC0 + cnt).toByte())){
+                    return@critical cnt
+                }
             }
+            throw NoVerifyCountRemainsException("カードがロックされています")
         }
     }
 

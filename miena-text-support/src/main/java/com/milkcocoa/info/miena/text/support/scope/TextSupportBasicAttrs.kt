@@ -6,6 +6,7 @@ import com.milkcocoa.info.miena.MienaTextSupportBasicAttrs
 import com.milkcocoa.info.miena.adpu.Adpu
 import com.milkcocoa.info.miena.adpu.CommandAdpu
 import com.milkcocoa.info.miena.entity.BasicAttrs
+import com.milkcocoa.info.miena.entity.PersonalNumber
 import com.milkcocoa.info.miena.pin.ComplexPin
 import com.milkcocoa.info.miena.text.support.TextSupport
 import com.milkcocoa.info.miena.util.Extension.asn1FrameIterator
@@ -23,6 +24,14 @@ import com.milkcocoa.info.miena.util.IsoDepUtil.isoDep
  *
  */
 class TextSupportBasicAttrs: TextSupport<ComplexPin>(), MienaTextSupportBasicAttrs {
+    override fun readPersonalNumber(tag: Tag): PersonalNumber {
+        TODO("Not yet implemented")
+    }
+
+    override fun selectPersonalNumber(tag: Tag) {
+        TODO("Not yet implemented")
+    }
+
     override fun readBasicAttrs(tag: Tag): BasicAttrs {
         return tag.isoDep().critical {isoDep->
             val adpu = Adpu(isoDep)

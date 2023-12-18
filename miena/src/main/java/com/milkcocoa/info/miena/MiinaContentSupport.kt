@@ -18,11 +18,9 @@ import java.security.cert.X509Certificate
 /**
  *
  */
-interface MienaTextSupport<PIN: Pin>{
+interface MienaTextSupport<PIN: Pin>: Miena<PIN>{
     fun selectTextSupport(tag: Tag)
     fun selectTextSupportPin(tag: Tag)
-    fun verifyCountRemains(tag: Tag): Int
-    fun verifyPin(tag: Tag?, pin: PIN)
 
     fun selectCertificate(tag: Tag)
     fun readCertificate(tag: Tag)
@@ -35,21 +33,16 @@ interface MienaTextSupport<PIN: Pin>{
 
     fun readBasicInfo(tag: Tag)
 
-}
-
-interface MienaTextSupportNumber: MienaTextSupport<MyNumberPin>{
     fun selectPersonalNumber(tag: Tag)
+    fun selectBasicAttrs(tag: Tag)
     fun readPersonalNumber(tag: Tag): PersonalNumber
+    fun readBasicAttrs(tag: Tag): BasicAttrs
+
 }
 
-interface MienaTextSupportBasicAttrs: MienaTextSupport<ComplexPin>{
-    fun selectBasicAttrs(tag: Tag)
-    fun readBasicAttrs(tag: Tag): BasicAttrs
-}
+interface MienaTextSupportNumber: MienaTextSupport<MyNumberPin>
+
+interface MienaTextSupportBasicAttrs: MienaTextSupport<ComplexPin>
 
 interface MienaTextSupportFull: MienaTextSupport<DigitPin>{
-    fun selectPersonalNumber(tag: Tag)
-    fun selectBasicAttrs(tag: Tag)
-    fun readPersonalNumber(tag: Tag): PersonalNumber
-    fun readBasicAttrs(tag: Tag): BasicAttrs
 }
