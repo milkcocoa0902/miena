@@ -74,40 +74,4 @@ abstract class TextSupport<PIN: Pin>: MienaTextSupport<PIN> {
             Adpu(isoDep).transceive(selectFileAdpu)
         }
     }
-    override fun verifyCountRemains(tag: Tag): Int {
-        return tag.isoDep().critical {isoDep->
-            val verifyAdpu = CommandAdpu(
-                CLA = 0x00,
-                INS = 0x20,
-                P1 = 0x00,
-                P2 = 0x80.toByte()
-            )
-            val response = Adpu(isoDep).transceive(verifyAdpu, validate = false)
-
-            // ロックまでの残回数を問い合わせるとき、コマンドの終端が変化する
-            // 終端が[0x63, 0x6?]になり、?が残回数
-            for(cnt in 1.until(15)){
-                if(response.validate(sw1 = 0x63, sw2 = (0xC0 + cnt).toByte())){
-                    return@critical cnt
-                }
-            }
-            throw NoVerifyCountRemainsException("カードがロックされています")
-        }
-    }
-
-    override fun verifyPin(tag: Tag?, pin: PIN) {
-        requireNotNull(tag)
-
-        tag.isoDep().critical {isoDep->
-            val verifyAdpu = CommandAdpu(
-                CLA = 0x00,
-                INS = 0x20,
-                P1 = 0x00,
-                P2 = 0x80.toByte(),
-                Lc = byteArrayOf(pin.length().toByte()),
-                DF = pin.toByteArray()
-            )
-            Adpu(isoDep).transceive(verifyAdpu)
-        }
-    }
 }
