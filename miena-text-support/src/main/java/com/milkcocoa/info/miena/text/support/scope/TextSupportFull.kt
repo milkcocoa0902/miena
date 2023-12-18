@@ -83,9 +83,9 @@ class TextSupportFull: TextSupport<DigitPin>(), MienaTextSupportFull {
                     AttrTag.Sex -> it.value?.apply {
                         sex = String(this).let {
                             if(it == "1") "男性"
-                            if(it == "2") "女性"
-                            if(it == "9") "その他"
-                            "不明"
+                            else if(it == "2") "女性"
+                            else if(it == "9") "その他"
+                            else "不明"
                         }
                     }
                     else -> Unit

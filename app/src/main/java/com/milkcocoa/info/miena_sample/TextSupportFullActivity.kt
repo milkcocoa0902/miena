@@ -12,15 +12,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.milkcocoa.info.miena.exception.AdpuValidateException
 import com.milkcocoa.info.miena.exception.NoVerifyCountRemainsException
-import com.milkcocoa.info.miena.pin.ComplexPin
-import com.milkcocoa.info.miena.text.support.scope.TextSupportBasicAttrs
+import com.milkcocoa.info.miena.pin.DigitPin
+import com.milkcocoa.info.miena.text.support.scope.TextSupportFull
 import kotlinx.coroutines.*
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 @RequiresApi(Build.VERSION_CODES.N)
-class TextSupportBasicAttrsActivity: AppCompatActivity(){
-    val textSupportBasicAttrs by lazy { TextSupportBasicAttrs() }
+class TextSupportFullActivity: AppCompatActivity(){
+    val textSupportFull by lazy { TextSupportFull() }
     val nfcCard: NfcAdapter by lazy { NfcAdapter.getDefaultAdapter(applicationContext) }
 
 
@@ -49,36 +49,39 @@ class TextSupportBasicAttrsActivity: AppCompatActivity(){
                     NfcAdapter.ReaderCallback { tag->
                         lifecycleScope.launch {
                             kotlin.runCatching {
-                                textSupportBasicAttrs.selectTextSupport(tag = tag)
-                                textSupportBasicAttrs.selectTextSupportPin(tag = tag)
-                                val remains = textSupportBasicAttrs.verifyCountRemains(tag = tag)
+                                textSupportFull.selectTextSupport(tag = tag)
+                                textSupportFull.selectTextSupportPin(tag = tag)
+                                val remains = textSupportFull.verifyCountRemains(tag = tag)
                                 Log.i("REMAINS", remains.toString())
                                 if(remains > 0){
-                                    textSupportBasicAttrs.verifyPin(tag = tag, pin = pin)
+                                    textSupportFull.verifyPin(tag = tag, pin = pin)
 
-                                    textSupportBasicAttrs.selectBasicAttrs(tag = tag)
-                                    val ba = textSupportBasicAttrs.readBasicAttrs(tag = tag)
+                                    textSupportFull.selectBasicAttrs(tag = tag)
+                                    val ba = textSupportFull.readBasicAttrs(tag = tag)
+                                    textSupportFull.selectPersonalNumber(tag = tag)
+                                    val pn = textSupportFull.readPersonalNumber(tag = tag)
 
                                     Log.i("BA", ba.toString())
+                                    Log.i("PN", pn.toString())
                                 }
                             }.getOrElse {
                                 when(it){
                                     is NoVerifyCountRemainsException ->{
-                                        Toast.makeText(this@TextSupportBasicAttrsActivity, "カードがロックされています", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(this@TextSupportFullActivity, "カードがロックされています", Toast.LENGTH_SHORT).show()
                                     }
                                     is AdpuValidateException ->{
-                                        Toast.makeText(this@TextSupportBasicAttrsActivity, "カードの読み取りに失敗しました", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(this@TextSupportFullActivity, "カードの読み取りに失敗しました", Toast.LENGTH_SHORT).show()
                                     }
                                 }
                             }.also {
-                                nfcCard.disableReaderMode(this@TextSupportBasicAttrsActivity)
+                                nfcCard.disableReaderMode(this@TextSupportFullActivity)
 
                                 progressDialog.dismiss()
                             }
 
                         }
                     }.let { nfcCallback->
-                        nfcCard.enableReaderMode(this@TextSupportBasicAttrsActivity, nfcCallback, NfcAdapter.FLAG_READER_NFC_B or NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK, null)
+                        nfcCard.enableReaderMode(this@TextSupportFullActivity, nfcCallback, NfcAdapter.FLAG_READER_NFC_B or NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK, null)
                     }
                 }
             }
@@ -88,17 +91,17 @@ class TextSupportBasicAttrsActivity: AppCompatActivity(){
     /**
      * request 4 digit of pin-code
      */
-    private suspend fun getPinCode(): ComplexPin?{
+    private suspend fun getPinCode(): DigitPin?{
         return suspendCoroutine { continuation ->
-            DialogFragmentComplexPinCode(
-                object : DialogFragmentComplexPinCode.DialogFragmentComplexPinCodeListener{
+            DialogFragmentPinCode(
+                object : DialogFragmentPinCode.DialogFragmentPinCodeListener{
                     override fun onCancel() {
                         continuation.resume(null)
                     }
 
                     override fun onComplete(pin: String) {
                         if(pin.isNotBlank()){
-                            continuation.resume(ComplexPin(pin))
+                            continuation.resume(DigitPin(pin))
                         }else{
                             continuation.resume(null)
                         }

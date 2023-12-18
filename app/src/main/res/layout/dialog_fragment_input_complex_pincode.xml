@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingHorizontal="8dp"
+        android:paddingVertical="10dp">
+
+    <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="start"
+            android:text="PINの入力"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+    <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="start"
+            android:text="14桁の暗証番号を入力してください"
+            android:textSize="16sp" />
+    <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="start"
+            android:text="※生年月日6桁 + 有効期限の西暦4桁 + 写真の下にある数字4桁"
+            android:textSize="10sp" />
+
+    <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            app:endIconMode="password_toggle"
+            app:hintEnabled="false">
+
+        <com.google.android.material.textfield.TextInputEditText
+                android:maxLength="16"
+                android:lines="1"
+                android:maxLines="1"
+                android:textAllCaps="true"
+                android:id="@+id/pin_code"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:inputType="text|textPassword" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:orientation="horizontal">
+
+        <Button
+                android:id="@+id/cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="0.4"
+                android:background="@android:color/transparent"
+                android:text="CANCEL"
+                android:textColor="@color/teal_700"
+                app:layout_constraintEnd_toStartOf="@id/space"
+                app:layout_constraintStart_toStartOf="parent" />
+        <Space
+                android:layout_width="20dp"
+                android:layout_height="match_parent"
+                android:id="@+id/space"
+                app:layout_constraintStart_toEndOf="@id/cancel"
+                app:layout_constraintEnd_toStartOf="@id/ok"/>
+        <Button
+                android:id="@+id/ok"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="0.4"
+                android:background="@android:color/transparent"
+                android:text="OK"
+                android:textColor="@color/teal_700"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/space" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</LinearLayout>

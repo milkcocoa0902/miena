@@ -28,7 +28,11 @@ class LaunchActivity : AppCompatActivity(){
         findViewById<Button>(R.id.attrs_basic).setOnClickListener {
             startActivity(Intent(this, TextSupportBasicAttrsActivity::class.java))
         }
-
-
+        findViewById<Button>(R.id.attrs_full).setOnClickListener {
+            startActivity(Intent(this, TextSupportFullActivity::class.java))
+        }
+        findViewById<Button>(R.id.attrs_mynum).setOnClickListener {
+            startActivity(Intent(this, TextSupportPersonalNumberActivity::class.java))
+        }
     }
 }

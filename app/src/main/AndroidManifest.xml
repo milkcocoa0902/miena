@@ -24,8 +24,13 @@
                 android:name=".JpkiSignActivity"
                 android:exported="false" />
         <activity
-                android:name=".TextSupportBasicAttrsActivity"
+                android:name=".TextSupportFullActivity"
+                android:exported="false" />
+        <activity android:name=".TextSupportBasicAttrsActivity"
             android:exported="false" />
+        <activity
+                android:name=".TextSupportPersonalNumberActivity"
+                android:exported="false"/>
     </application>
 
 </manifest>

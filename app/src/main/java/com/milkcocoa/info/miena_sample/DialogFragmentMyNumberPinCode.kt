@@ -18,13 +18,13 @@ import com.google.android.material.textfield.TextInputEditText
  *
  */
 
-class DialogFragmentComplexPinCode(private val listener: DialogFragmentComplexPinCodeListener): DialogFragment() {
-    interface DialogFragmentComplexPinCodeListener{
+class DialogFragmentMyNumberPinCode(private val listener: DialogFragmentMyNumberPinCodeListener): DialogFragment() {
+    interface DialogFragmentMyNumberPinCodeListener{
         fun onCancel()
         fun onComplete(pin: String)
     }
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return layoutInflater.inflate(R.layout.dialog_fragment_input_complex_pincode, null, false)
+        return layoutInflater.inflate(R.layout.dialog_fragment_input_mynumber_pincode, null, false)
             .apply {
                 findViewById<Button>(R.id.ok).setOnClickListener {
                     dismiss()
