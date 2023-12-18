@@ -14,7 +14,7 @@ data class ResponseAdpu(val rawData: ByteArray) {
 
     fun validate(sw1: Byte = 0x90.toByte(), sw2: Byte = 0x00): Boolean{
         val sw = rawData.takeLast(2)
-        if(sw.get(0) != sw1 && sw.get(1) != sw2){
+        if(sw.get(0) != sw1 || sw.get(1) != sw2){
             return false
         }
 
