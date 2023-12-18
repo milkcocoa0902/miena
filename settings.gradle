@@ -17,3 +17,4 @@ rootProject.name = "Miena"
 include ':app'
 include ':miena'
 include ':miena-jpki'
+include ':miena-text-support'

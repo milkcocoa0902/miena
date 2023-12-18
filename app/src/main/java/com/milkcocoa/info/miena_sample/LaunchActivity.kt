@@ -25,6 +25,9 @@ class LaunchActivity : AppCompatActivity(){
         findViewById<Button>(R.id.sign).setOnClickListener {
             startActivity(Intent(this, JpkiSignActivity::class.java))
         }
+        findViewById<Button>(R.id.attrs_basic).setOnClickListener {
+            startActivity(Intent(this, TextSupportBasicAttrsActivity::class.java))
+        }
 
 
     }

@@ -1,4 +1,4 @@
-package com.milkcocoa.info.miena
+package com.milkcocoa.info.miena.content.support
 
 import org.junit.Test
 

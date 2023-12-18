@@ -1,6 +1,7 @@
 package com.milkcocoa.info.miena.adpu
 
 import android.nfc.tech.IsoDep
+import android.util.Log
 import com.milkcocoa.info.miena.exception.AdpuValidateException
 
 class Adpu(val isoDep: IsoDep) {
@@ -9,6 +10,7 @@ class Adpu(val isoDep: IsoDep) {
         val responseAdpu = ResponseAdpu(rawData = response)
         if(validate) {
             if(responseAdpu.validate(sw1, sw2).not()){
+                Log.i("AFAF", responseAdpu.toString())
                 throw AdpuValidateException("ADPUコマンドの結果が異常です")
             }
         }
