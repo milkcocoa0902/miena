@@ -145,14 +145,8 @@ class TextSupportFullActivity: AppCompatActivity(){
                         lifecycleScope.launch {
                             kotlin.runCatching {
                                 textSupportFull.selectAP(tag = tag)
-                                textSupportFull.selectPin(tag = tag)
-                                val remains = textSupportFull.verifyCountRemains(tag = tag)
-                                Log.i("REMAINS", remains.toString())
-                                if(remains > 0){
-                                    textSupportFull.verifyPin(tag = tag, pin = pin)
-                                    textSupportFull.selectCertificate(tag = tag)
-                                    textSupportFull.readCertificate(tag = tag)
-                                }
+                                textSupportFull.selectCertificate(tag = tag)
+                                textSupportFull.readCertificate(tag = tag)
                             }.getOrElse {
                                 when(it){
                                     is NoVerifyCountRemainsException ->{

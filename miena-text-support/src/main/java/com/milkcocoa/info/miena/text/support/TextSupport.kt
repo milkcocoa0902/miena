@@ -14,6 +14,7 @@ import com.milkcocoa.info.miena.util.IsoDepUtil.critical
 import com.milkcocoa.info.miena.util.IsoDepUtil.isoDep
 import com.milkcocoa.info.miena.util.Sha1
 import java.io.ByteArrayInputStream
+import java.security.Security
 import java.security.cert.CertificateFactory
 import java.security.cert.X509Certificate
 
@@ -39,7 +40,7 @@ abstract class TextSupport<PIN: Pin>: MienaTextSupport<PIN> {
                 INS = 0xB0.toByte(),
                 P1 = 0x00,
                 P2 = 0x00,
-                Le = 0x04.toByteArray()
+                Le = 0x05.toByteArray()
             )
 
             val preloadAdpuResult = adpu.transceive(preloadAdpu)
@@ -48,13 +49,28 @@ abstract class TextSupport<PIN: Pin>: MienaTextSupport<PIN> {
                 CLA = 0x00,
                 INS = 0xB0.toByte(),
                 P1 = 0x00,
-                P2 = 0x00,
+                P2 = 0x05,
                 Le = preloadAdpuResult.asn1FrameIterator().next().frameSize.toByteArray()
             )
 
             val readPersonalNumberResult = adpu.transceive(readBasicInfoAdpu)
             readPersonalNumberResult.asn1FrameIterator().forEach {
-                Log.i("BASIC", String(it.value ?: byteArrayOf()))
+                when(it.tag){
+                    65 ->{
+                        Log.i("APINFO", it.value?.joinToString(separator = "") { eachByte -> "%02x".format(eachByte) } ?: "")
+                        Log.i("VERSION", it.value?.getOrNull(0)?.let { "%02X".format(it) } ?: "")
+                        Log.i("ExtADPU", it.value?.getOrNull(1)?.let { "%02X".format(it) } ?: "")
+                        Log.i("Vendor", it.value?.getOrNull(2)?.let { "%02X".format(it) } ?: "")
+                        Log.i("Option", it.value?.getOrNull(3)?.let { "%02X".format(it) } ?: "")
+                    }
+                    66 ->{
+                        Log.i("Key ID", it.value?.joinToString(separator = "") { eachByte -> "%02x".format(eachByte) } ?: "")
+                    }
+                    else ->{
+                        // ??????
+                        // Log.i("Padding?", it.value?.joinToString(separator = "") { eachByte -> "%02x".format(eachByte) } ?: "")
+                    }
+                }
             }
         }
     }
@@ -72,7 +88,7 @@ abstract class TextSupport<PIN: Pin>: MienaTextSupport<PIN> {
                 INS = 0xB0.toByte(),
                 P1 = 0x00,
                 P2 = 0x00,
-                Le = byteArrayOf(0x04)
+                Le = byteArrayOf(0x00)
             )
             val preloadResponse = adpu.transceive(preloadAdpu)
             val preloadAsn1 = preloadResponse.asn1FrameIterator().next().frameSize
@@ -81,17 +97,17 @@ abstract class TextSupport<PIN: Pin>: MienaTextSupport<PIN> {
                 CLA = 0x00,
                 INS = 0xB0.toByte(),
                 P1 = 0x00,
-                P2 = 0x04,
+                P2 = 0x00,
                 Le = preloadAsn1.toByteArray()
             )
             val certificateByteArray = adpu.transceive(readCertificateAdpu)
 
-            // X.509形式に変換
-            val cert = CertificateFactory.getInstance("X.509").generateCertificate(
-                ByteArrayInputStream(certificateByteArray.data)
-            ) as X509Certificate
-
-            Log.i("CERT", cert.toString())
+            // 何フォーマットかわからないが、一応読み込めている。
+            // 読み込めているデータ、もしかしたら間違っているかもしれないが、
+            // フォーマットがわからないのでどうしようもない
+            certificateByteArray.asn1FrameIterator().forEach {
+                Log.i("FRAME", "${it.tag} : ${it.value?.let { String(it) }}")
+            }
         }
     }
 
@@ -103,6 +119,8 @@ abstract class TextSupport<PIN: Pin>: MienaTextSupport<PIN> {
         tag.isoDep().critical {isoDep->
             val adpu = Adpu(isoDep)
 
+            // 5byte読みの根拠がわからん。
+            // デバッグしてたら自分のカードだと5byteを境になんかあったのでひとまず
             val preloadAdpu = CommandAdpu(
                 CLA = 0x00,
                 INS = 0xB0.toByte(),
@@ -123,9 +141,21 @@ abstract class TextSupport<PIN: Pin>: MienaTextSupport<PIN> {
             val certificateByteArray = adpu.transceive(readCertificateAdpu)
 
             certificateByteArray.asn1FrameIterator().forEach {
-                Log.i("TAG", it.tag.toString())
-                it.value ?: return@forEach
-                Log.i("digest", "${it.value?.toList()}")
+                when(it.tag){
+                    49 ->{
+                        Log.i("MyNumberDigest", it.value?.joinToString(separator = "") { eachByte -> "%02x".format(eachByte) } ?: "")
+                    }
+                    50 ->{
+                        Log.i("AttrsDigest", it.value?.joinToString(separator = "") { eachByte -> "%02x".format(eachByte) } ?: "")
+                    }
+                    51 ->{
+                        Log.i("Signature", it.value?.joinToString(separator = "") { eachByte -> "%02x".format(eachByte) } ?: "")
+                    }
+                    else ->{
+                        // ??????
+                        // Log.i("Padding?", it.value?.joinToString(separator = "") { eachByte -> "%02x".format(eachByte) } ?: "")
+                    }
+                }
             }
         }
     }
