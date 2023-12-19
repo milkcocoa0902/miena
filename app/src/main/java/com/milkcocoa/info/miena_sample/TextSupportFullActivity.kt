@@ -13,14 +13,14 @@ import androidx.lifecycle.lifecycleScope
 import com.milkcocoa.info.miena.exception.AdpuValidateException
 import com.milkcocoa.info.miena.exception.NoVerifyCountRemainsException
 import com.milkcocoa.info.miena.pin.DigitPin
-import com.milkcocoa.info.miena.text.support.scope.TextSupportFull
+import com.milkcocoa.info.miena.text.scope.TextFull
 import kotlinx.coroutines.*
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 @RequiresApi(Build.VERSION_CODES.N)
 class TextSupportFullActivity: AppCompatActivity(){
-    val textSupportFull by lazy { TextSupportFull() }
+    val textSupportFull by lazy { TextFull() }
     val nfcCard: NfcAdapter by lazy { NfcAdapter.getDefaultAdapter(applicationContext) }
 
 

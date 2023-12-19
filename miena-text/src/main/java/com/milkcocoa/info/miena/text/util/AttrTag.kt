@@ -1,4 +1,4 @@
-package com.milkcocoa.info.miena.text.support.util
+package com.milkcocoa.info.miena.text.util
 
 /**
  * Tag

@@ -1,22 +1,14 @@
-package com.milkcocoa.info.miena.text.support
+package com.milkcocoa.info.miena.text
 
 import android.nfc.Tag
 import android.util.Log
-import com.milkcocoa.info.miena.MienaTextSupport
+import com.milkcocoa.info.miena.MienaText
 import com.milkcocoa.info.miena.adpu.Adpu
 import com.milkcocoa.info.miena.adpu.CommandAdpu
-import com.milkcocoa.info.miena.entity.PersonalNumber
-import com.milkcocoa.info.miena.exception.IllegalTagException
-import com.milkcocoa.info.miena.exception.NoVerifyCountRemainsException
 import com.milkcocoa.info.miena.pin.Pin
 import com.milkcocoa.info.miena.util.Extension.toByteArray
 import com.milkcocoa.info.miena.util.IsoDepUtil.critical
 import com.milkcocoa.info.miena.util.IsoDepUtil.isoDep
-import com.milkcocoa.info.miena.util.Sha1
-import java.io.ByteArrayInputStream
-import java.security.Security
-import java.security.cert.CertificateFactory
-import java.security.cert.X509Certificate
 
 /**
  * TextSupport
@@ -27,7 +19,7 @@ import java.security.cert.X509Certificate
 /**
  *
  */
-abstract class TextSupport<PIN: Pin>: MienaTextSupport<PIN> {
+abstract class Text<PIN: Pin>: MienaText<PIN> {
     override fun selectBasicInfo(tag: Tag) {
         selectEF(tag, byteArrayOf(0x00, 0x05))
     }

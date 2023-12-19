@@ -7,7 +7,6 @@ import com.milkcocoa.info.miena.pin.ComplexPin
 import com.milkcocoa.info.miena.pin.DigitPin
 import com.milkcocoa.info.miena.pin.MyNumberPin
 import com.milkcocoa.info.miena.pin.Pin
-import java.security.cert.X509Certificate
 
 /**
  * Miina
@@ -18,7 +17,7 @@ import java.security.cert.X509Certificate
 /**
  *
  */
-interface MienaTextSupport<PIN: Pin>: Miena<PIN>{
+interface MienaText<PIN: Pin>: Miena<PIN>{
     fun selectCertificate(tag: Tag)
     fun readCertificate(tag: Tag)
 
@@ -37,9 +36,9 @@ interface MienaTextSupport<PIN: Pin>: Miena<PIN>{
 
 }
 
-interface MienaTextSupportNumber: MienaTextSupport<MyNumberPin>
+interface MienaTextNumber: MienaText<MyNumberPin>
 
-interface MienaTextSupportBasicAttrs: MienaTextSupport<ComplexPin>
+interface MienaTextBasicAttrs: MienaText<ComplexPin>
 
-interface MienaTextSupportFull: MienaTextSupport<DigitPin>{
+interface MienaTextFull: MienaText<DigitPin>{
 }

@@ -1,14 +1,14 @@
-package com.milkcocoa.info.miena.text.support.scope
+package com.milkcocoa.info.miena.text.scope
 
 import android.nfc.Tag
 import android.util.Log
-import com.milkcocoa.info.miena.MienaTextSupportBasicAttrs
+import com.milkcocoa.info.miena.MienaTextBasicAttrs
 import com.milkcocoa.info.miena.adpu.Adpu
 import com.milkcocoa.info.miena.adpu.CommandAdpu
 import com.milkcocoa.info.miena.entity.BasicAttrs
 import com.milkcocoa.info.miena.entity.PersonalNumber
 import com.milkcocoa.info.miena.pin.ComplexPin
-import com.milkcocoa.info.miena.text.support.TextSupport
+import com.milkcocoa.info.miena.text.Text
 import com.milkcocoa.info.miena.util.Extension.asn1FrameIterator
 import com.milkcocoa.info.miena.util.Extension.toByteArray
 import com.milkcocoa.info.miena.util.IsoDepUtil.critical
@@ -23,7 +23,7 @@ import com.milkcocoa.info.miena.util.IsoDepUtil.isoDep
 /**
  *
  */
-class TextSupportBasicAttrs: TextSupport<ComplexPin>(), MienaTextSupportBasicAttrs {
+class TextBasicAttrs: Text<ComplexPin>(), MienaTextBasicAttrs {
 
     /**
      * basic attrs can not read mynumber

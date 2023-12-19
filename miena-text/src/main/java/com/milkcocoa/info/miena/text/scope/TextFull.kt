@@ -1,16 +1,16 @@
-package com.milkcocoa.info.miena.text.support.scope
+package com.milkcocoa.info.miena.text.scope
 
 import android.nfc.Tag
 import android.util.Log
-import com.milkcocoa.info.miena.MienaTextSupportFull
+import com.milkcocoa.info.miena.MienaTextFull
 import com.milkcocoa.info.miena.adpu.Adpu
 import com.milkcocoa.info.miena.adpu.CommandAdpu
 import com.milkcocoa.info.miena.entity.BasicAttrs
 import com.milkcocoa.info.miena.entity.PersonalNumber
 import com.milkcocoa.info.miena.exception.IllegalTagException
 import com.milkcocoa.info.miena.pin.DigitPin
-import com.milkcocoa.info.miena.text.support.TextSupport
-import com.milkcocoa.info.miena.text.support.util.AttrTag
+import com.milkcocoa.info.miena.text.Text
+import com.milkcocoa.info.miena.text.util.AttrTag
 import com.milkcocoa.info.miena.util.Extension.asn1FrameIterator
 import com.milkcocoa.info.miena.util.Extension.toByteArray
 import com.milkcocoa.info.miena.util.IsoDepUtil.critical
@@ -25,7 +25,7 @@ import com.milkcocoa.info.miena.util.IsoDepUtil.isoDep
 /**
  *
  */
-class TextSupportFull: TextSupport<DigitPin>(), MienaTextSupportFull {
+class TextFull: Text<DigitPin>(), MienaTextFull {
     override fun selectPin(tag: Tag) {
         selectEF(tag, byteArrayOf(0x00, 0x11))
     }

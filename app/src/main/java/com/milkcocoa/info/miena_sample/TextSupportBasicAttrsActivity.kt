@@ -13,14 +13,14 @@ import androidx.lifecycle.lifecycleScope
 import com.milkcocoa.info.miena.exception.AdpuValidateException
 import com.milkcocoa.info.miena.exception.NoVerifyCountRemainsException
 import com.milkcocoa.info.miena.pin.ComplexPin
-import com.milkcocoa.info.miena.text.support.scope.TextSupportBasicAttrs
+import com.milkcocoa.info.miena.text.scope.TextBasicAttrs
 import kotlinx.coroutines.*
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 @RequiresApi(Build.VERSION_CODES.N)
 class TextSupportBasicAttrsActivity: AppCompatActivity(){
-    val textSupportBasicAttrs by lazy { TextSupportBasicAttrs() }
+    val textSupportBasicAttrs by lazy { TextBasicAttrs() }
     val nfcCard: NfcAdapter by lazy { NfcAdapter.getDefaultAdapter(applicationContext) }
 
 
