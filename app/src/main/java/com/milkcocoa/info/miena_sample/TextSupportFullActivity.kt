@@ -49,8 +49,8 @@ class TextSupportFullActivity: AppCompatActivity(){
                     NfcAdapter.ReaderCallback { tag->
                         lifecycleScope.launch {
                             kotlin.runCatching {
-                                textSupportFull.selectTextSupport(tag = tag)
-                                textSupportFull.selectTextSupportPin(tag = tag)
+                                textSupportFull.selectAP(tag = tag)
+                                textSupportFull.selectPin(tag = tag)
                                 val remains = textSupportFull.verifyCountRemains(tag = tag)
                                 Log.i("REMAINS", remains.toString())
                                 if(remains > 0){
@@ -63,6 +63,140 @@ class TextSupportFullActivity: AppCompatActivity(){
 
                                     Log.i("BA", ba.toString())
                                     Log.i("PN", pn.toString())
+                                }
+                            }.getOrElse {
+                                when(it){
+                                    is NoVerifyCountRemainsException ->{
+                                        Toast.makeText(this@TextSupportFullActivity, "カードがロックされています", Toast.LENGTH_SHORT).show()
+                                    }
+                                    is AdpuValidateException ->{
+                                        Toast.makeText(this@TextSupportFullActivity, "カードの読み取りに失敗しました", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                            }.also {
+                                nfcCard.disableReaderMode(this@TextSupportFullActivity)
+
+                                progressDialog.dismiss()
+                            }
+
+                        }
+                    }.let { nfcCallback->
+                        nfcCard.enableReaderMode(this@TextSupportFullActivity, nfcCallback, NfcAdapter.FLAG_READER_NFC_B or NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK, null)
+                    }
+                }
+            }
+        }
+
+
+        findViewById<Button>(R.id.read_sig).also { readSignature->
+            readSignature.setOnClickListener {
+                lifecycleScope.launch {
+
+                    val pin = getPinCode()
+                    pin ?: return@launch
+                    Log.i("PIN", pin.toString())
+
+                    progressDialog.show()
+                    NfcAdapter.ReaderCallback { tag->
+                        lifecycleScope.launch {
+                            kotlin.runCatching {
+                                textSupportFull.selectAP(tag = tag)
+                                textSupportFull.selectPin(tag = tag)
+                                val remains = textSupportFull.verifyCountRemains(tag = tag)
+                                Log.i("REMAINS", remains.toString())
+                                if(remains > 0){
+                                    textSupportFull.verifyPin(tag = tag, pin = pin)
+                                    textSupportFull.selectSignature(tag = tag)
+                                    textSupportFull.readSignature(tag = tag)
+                                }
+                            }.getOrElse {
+                                when(it){
+                                    is NoVerifyCountRemainsException ->{
+                                        Toast.makeText(this@TextSupportFullActivity, "カードがロックされています", Toast.LENGTH_SHORT).show()
+                                    }
+                                    is AdpuValidateException ->{
+                                        Toast.makeText(this@TextSupportFullActivity, "カードの読み取りに失敗しました", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                            }.also {
+                                nfcCard.disableReaderMode(this@TextSupportFullActivity)
+
+                                progressDialog.dismiss()
+                            }
+
+                        }
+                    }.let { nfcCallback->
+                        nfcCard.enableReaderMode(this@TextSupportFullActivity, nfcCallback, NfcAdapter.FLAG_READER_NFC_B or NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK, null)
+                    }
+                }
+            }
+        }
+
+        findViewById<Button>(R.id.read_cert).also { readCertificates->
+            readCertificates.setOnClickListener {
+                lifecycleScope.launch {
+
+                    val pin = getPinCode()
+                    pin ?: return@launch
+                    Log.i("PIN", pin.toString())
+
+                    progressDialog.show()
+                    NfcAdapter.ReaderCallback { tag->
+                        lifecycleScope.launch {
+                            kotlin.runCatching {
+                                textSupportFull.selectAP(tag = tag)
+                                textSupportFull.selectPin(tag = tag)
+                                val remains = textSupportFull.verifyCountRemains(tag = tag)
+                                Log.i("REMAINS", remains.toString())
+                                if(remains > 0){
+                                    textSupportFull.verifyPin(tag = tag, pin = pin)
+                                    textSupportFull.selectCertificate(tag = tag)
+                                    textSupportFull.readCertificate(tag = tag)
+                                }
+                            }.getOrElse {
+                                when(it){
+                                    is NoVerifyCountRemainsException ->{
+                                        Toast.makeText(this@TextSupportFullActivity, "カードがロックされています", Toast.LENGTH_SHORT).show()
+                                    }
+                                    is AdpuValidateException ->{
+                                        Toast.makeText(this@TextSupportFullActivity, "カードの読み取りに失敗しました", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                            }.also {
+                                nfcCard.disableReaderMode(this@TextSupportFullActivity)
+
+                                progressDialog.dismiss()
+                            }
+
+                        }
+                    }.let { nfcCallback->
+                        nfcCard.enableReaderMode(this@TextSupportFullActivity, nfcCallback, NfcAdapter.FLAG_READER_NFC_B or NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK, null)
+                    }
+                }
+            }
+        }
+
+
+        findViewById<Button>(R.id.read_basic).also { readBasicInfo->
+            readBasicInfo.setOnClickListener {
+                lifecycleScope.launch {
+
+                    val pin = getPinCode()
+                    pin ?: return@launch
+                    Log.i("PIN", pin.toString())
+
+                    progressDialog.show()
+                    NfcAdapter.ReaderCallback { tag->
+                        lifecycleScope.launch {
+                            kotlin.runCatching {
+                                textSupportFull.selectAP(tag = tag)
+                                textSupportFull.selectPin(tag = tag)
+                                val remains = textSupportFull.verifyCountRemains(tag = tag)
+                                Log.i("REMAINS", remains.toString())
+                                if(remains > 0){
+                                    textSupportFull.verifyPin(tag = tag, pin = pin)
+                                    textSupportFull.selectBasicInfo(tag = tag)
+                                    textSupportFull.readBasicInfo(tag = tag)
                                 }
                             }.getOrElse {
                                 when(it){
