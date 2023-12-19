@@ -18,20 +18,8 @@ import kotlin.contracts.contract
 
 class JpkiAuth : Jpki<DigitPin>(){
     override fun selectCertificatePublicKey(tag: Tag){
-        tag.isoDep().critical {isoDep->
-            val selectFileAdpu = CommandAdpu(
-                CLA = 0x00,
-                INS = 0xA4.toByte(),
-                P1 = 0x02,
-                P2 = 0x0C,
-                Lc = byteArrayOf(0x02),
-                DF = byteArrayOf(0x00, 0x0A.toByte())
-            )
-            Adpu(isoDep).transceive(selectFileAdpu)
-        }
+        selectEF(tag, byteArrayOf(0x00, 0x0A))
     }
-
-
 
 
     // 認証用の鍵を読み取る
@@ -91,78 +79,11 @@ class JpkiAuth : Jpki<DigitPin>(){
         }
     }
 
-    override fun selectCertificatePin(tag: Tag){
-        tag.isoDep().critical { isoDep ->
-            val adpu = Adpu(isoDep)
-            val selectFile = CommandAdpu(
-                CLA = 0x00,
-                INS = 0xA4.toByte(),
-                P1 = 0x02,
-                P2 = 0x0C,
-                Lc = byteArrayOf(0x02),
-                DF = byteArrayOf(0x00, 0x18)
-            )
-            adpu.transceive(selectFile)
-        }
+    override fun selectPin(tag: Tag){
+        selectEF(tag, byteArrayOf(0x00, 0x18))
     }
 
     override fun selectCertificatePrivateKey(tag: Tag){
-        tag.isoDep().critical {isoDep->
-            val selectFileAdpu = CommandAdpu(
-                CLA = 0x00,
-                INS = 0xA4.toByte(),
-                P1 = 0x02,
-                P2 = 0x0C,
-                Lc = byteArrayOf(0x02),
-                DF = byteArrayOf(0x00, 0x17)
-            )
-            Adpu(isoDep).transceive(selectFileAdpu)
-        }
-    }
-
-
-    // 認証用PINのロックを解除する
-    override fun verifyPin(tag: Tag?, pin: DigitPin){
-        requireNotNull(tag)
-
-        tag.isoDep().critical {isoDep->
-            val verifyAdpu = CommandAdpu(
-                CLA = 0x00,
-                INS = 0x20,
-                P1 = 0x00,
-                P2 = 0x80.toByte(),
-                Lc = byteArrayOf(pin.length().toByte()),
-                DF = pin.toByteArray()
-            )
-            Adpu(isoDep).transceive(verifyAdpu)
-        }
-    }
-
-
-    override fun verifyCountRemains(tag: Tag): Int{
-        return tag.isoDep().critical {isoDep->
-            val verifyAdpu = CommandAdpu(
-                CLA = 0x00,
-                INS = 0x20,
-                P1 = 0x00,
-                P2 = 0x80.toByte()
-            )
-            val response = Adpu(isoDep).transceive(verifyAdpu, validate = false)
-
-
-            // ロックまでの残回数を問い合わせるとき、コマンドの終端が変化する
-            // 終端が[0x63, 0x6?]になり、?が残回数
-            if(response.validate(sw1 = 0x63, sw2 = 0xC3.toByte())){
-                return@critical 3
-            }else if(response.validate(sw1 = 0x63, sw2 = 0xC2.toByte())){
-                return@critical 2
-            }else if (response.validate(sw1 = 0x63, sw2 = 0xC1.toByte())){
-                return@critical 1
-            }else if(response.validate(sw1 = 0x63, sw2 = 0xC0.toByte())){
-                throw NoVerifyCountRemainsException("カードがロックされています")
-            }else{
-                throw NoVerifyCountRemainsException("カードがロックされています")
-            }
-        }
+        selectEF(tag, byteArrayOf(0x00, 0x17))
     }
 }

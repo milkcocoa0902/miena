@@ -19,9 +19,6 @@ import java.security.cert.X509Certificate
  *
  */
 interface MienaTextSupport<PIN: Pin>: Miena<PIN>{
-    fun selectTextSupport(tag: Tag)
-    fun selectTextSupportPin(tag: Tag)
-
     fun selectCertificate(tag: Tag)
     fun readCertificate(tag: Tag)
 

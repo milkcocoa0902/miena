@@ -25,7 +25,7 @@ abstract class Jpki<PIN: Pin> : MiinaJpki<PIN> {
      * @brief : send command to card for transition into JPKI mode
      * @param tag[Tag]: NFC card object
      */
-    override fun selectJpki(tag: Tag) {
+    override fun selectAP(tag: Tag) {
         tag.isoDep().critical { isoDep ->
             val selectFileAdpu = CommandAdpu(
                 CLA = 0x00,

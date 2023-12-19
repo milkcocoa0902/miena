@@ -26,6 +26,9 @@ import com.milkcocoa.info.miena.util.IsoDepUtil.isoDep
  *
  */
 class TextSupportFull: TextSupport<DigitPin>(), MienaTextSupportFull {
+    override fun selectPin(tag: Tag) {
+        selectEF(tag, byteArrayOf(0x00, 0x11))
+    }
     override fun readPersonalNumber(tag: Tag): PersonalNumber {
         return tag.isoDep().critical {isoDep->
             val adpu = Adpu(isoDep)
@@ -100,46 +103,12 @@ class TextSupportFull: TextSupport<DigitPin>(), MienaTextSupportFull {
         }
     }
 
-    override fun selectTextSupportPin(tag: Tag) {
-        tag.isoDep().critical { isoDep ->
-            val adpu = Adpu(isoDep)
-            val selectFile = CommandAdpu(
-                CLA = 0x00,
-                INS = 0xA4.toByte(),
-                P1 = 0x02,
-                P2 = 0x0C,
-                Lc = byteArrayOf(0x02),
-                DF = byteArrayOf(0x00, 0x11)
-            )
-            adpu.transceive(selectFile)
-        }
-    }
 
     override fun selectBasicAttrs(tag: Tag) {
-        tag.isoDep().critical {isoDep->
-            val selectFileAdpu = CommandAdpu(
-                CLA = 0x00,
-                INS = 0xA4.toByte(),
-                P1 = 0x02,
-                P2 = 0x0C,
-                Lc = byteArrayOf(0x02),
-                DF = byteArrayOf(0x00, 0x02.toByte())
-            )
-            Adpu(isoDep).transceive(selectFileAdpu)
-        }
+        selectEF(tag, byteArrayOf(0x00, 0x02))
     }
 
     override fun selectPersonalNumber(tag: Tag) {
-        tag.isoDep().critical {isoDep->
-            val selectFileAdpu = CommandAdpu(
-                CLA = 0x00,
-                INS = 0xA4.toByte(),
-                P1 = 0x02,
-                P2 = 0x0C,
-                Lc = byteArrayOf(0x02),
-                DF = byteArrayOf(0x00, 0x01.toByte())
-            )
-            Adpu(isoDep).transceive(selectFileAdpu)
-        }
+        selectEF(tag, byteArrayOf(0x00, 0x01))
     }
 }

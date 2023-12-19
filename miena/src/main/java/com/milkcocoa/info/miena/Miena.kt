@@ -18,6 +18,26 @@ import com.milkcocoa.info.miena.util.IsoDepUtil.isoDep
  *
  */
 interface Miena<PIN: Pin> {
+    fun selectAP(tag: Tag)
+    fun selectPin(tag: Tag)
+
+    fun selectEF(tag: Tag, addr: ByteArray){
+        if(addr.size != 2) throw IllegalArgumentException("")
+
+        tag.isoDep().critical { isoDep ->
+            val adpu = Adpu(isoDep)
+            val selectFile = CommandAdpu(
+                CLA = 0x00,
+                INS = 0xA4.toByte(),
+                P1 = 0x02,
+                P2 = 0x0C,
+                Lc = byteArrayOf(0x02),
+                DF = addr
+            )
+            adpu.transceive(selectFile)
+        }
+    }
+
     fun verifyPin(tag: Tag?, pin: PIN){
         requireNotNull(tag)
 
