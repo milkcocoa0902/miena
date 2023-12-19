@@ -49,8 +49,8 @@ class TextSupportBasicAttrsActivity: AppCompatActivity(){
                     NfcAdapter.ReaderCallback { tag->
                         lifecycleScope.launch {
                             kotlin.runCatching {
-                                textSupportBasicAttrs.selectTextSupport(tag = tag)
-                                textSupportBasicAttrs.selectTextSupportPin(tag = tag)
+                                textSupportBasicAttrs.selectAP(tag = tag)
+                                textSupportBasicAttrs.selectPin(tag = tag)
                                 val remains = textSupportBasicAttrs.verifyCountRemains(tag = tag)
                                 Log.i("REMAINS", remains.toString())
                                 if(remains > 0){

@@ -10,7 +10,6 @@ class Adpu(val isoDep: IsoDep) {
         val responseAdpu = ResponseAdpu(rawData = response)
         if(validate) {
             if(responseAdpu.validate(sw1, sw2).not()){
-                Log.i("AFAF", responseAdpu.toString())
                 throw AdpuValidateException("ADPUコマンドの結果が異常です")
             }
         }

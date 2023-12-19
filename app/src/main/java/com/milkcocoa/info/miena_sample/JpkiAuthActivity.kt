@@ -97,7 +97,7 @@ class JpkiAuthActivity: AppCompatActivity(){
                         lifecycleScope.launch {
                             kotlin.runCatching {
                                 // 1. JPKI APを選択する
-                                jpki.selectJpki(tag = tag)
+                                jpki.selectAP(tag = tag)
 
                                 // 2. 公開鍵を選択する
                                 jpki.selectCertificatePublicKey(tag = tag)
@@ -155,10 +155,10 @@ class JpkiAuthActivity: AppCompatActivity(){
                         lifecycleScope.launch {
                             runCatching {
                                 // 1. まず、JPKI APを選択
-                                jpki.selectJpki(tag = tag)
+                                jpki.selectAP(tag = tag)
 
                                 // 2. 続いて、PINファイルを選択
-                                jpki.selectCertificatePin(tag = tag)
+                                jpki.selectPin(tag = tag)
                                 // 3. 残回数を確認しておく
                                 val remains = jpki.verifyCountRemains(tag = tag)
 

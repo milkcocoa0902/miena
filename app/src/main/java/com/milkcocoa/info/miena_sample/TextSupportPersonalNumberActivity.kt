@@ -51,8 +51,8 @@ class TextSupportPersonalNumberActivity: AppCompatActivity(){
                     NfcAdapter.ReaderCallback { tag->
                         lifecycleScope.launch {
                             kotlin.runCatching {
-                                textSupportMyNumber.selectTextSupport(tag = tag)
-                                textSupportMyNumber.selectTextSupportPin(tag = tag)
+                                textSupportMyNumber.selectAP(tag = tag)
+                                textSupportMyNumber.selectPin(tag = tag)
                                 val remains = textSupportMyNumber.verifyCountRemains(tag = tag)
                                 Log.i("REMAINS", remains.toString())
                                 if(remains > 0){

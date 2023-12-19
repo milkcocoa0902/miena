@@ -96,10 +96,10 @@ class JpkiSignActivity: AppCompatActivity(){
                         lifecycleScope.launch {
                             kotlin.runCatching {
                                 // 1. JPKI APを選択する
-                                jpki.selectJpki(tag = tag)
+                                jpki.selectAP(tag = tag)
 
                                 // 2. PINを選択する
-                                jpki.selectCertificatePin(tag = tag)
+                                jpki.selectPin(tag = tag)
 
                                 // 3. 残数を確認しておく
                                 val remains = jpki.verifyCountRemains(tag = tag)
@@ -165,10 +165,10 @@ class JpkiSignActivity: AppCompatActivity(){
 
                             kotlin.runCatching {
                                 // 1. JPKI APを選択する
-                                jpki.selectJpki(tag = tag)
+                                jpki.selectAP(tag = tag)
 
                                 // 2. PINを選択する
-                                jpki.selectCertificatePin(tag = tag)
+                                jpki.selectPin(tag = tag)
 
                                 // 3. 残回数を確認しておく
                                 val remains = jpki.verifyCountRemains(tag = tag)
