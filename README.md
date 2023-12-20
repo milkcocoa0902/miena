@@ -41,5 +41,59 @@ miena-jpki同様、ひとまずは操作のサポートです。
 5. 署名対象のデータを投げつける
 6. 署名のデータを受け取る
 
+
 現状のMienaでは、これら各工程の操作をサポートするライブラリとなっています。  
-そのため、どのファイルを選択して、、、、みたいな順番を把握している必要はあります。
+そのため、どのファイルを選択して、、、、みたいな順番を把握している必要はあります。  
+
+コードで書くとざっくり以下の感じ  
+
+```kotlin
+
+NfcAdapter.ReaderCallback {tag->
+    lifecycleScope.launch {
+        runCatching {
+            val jpki = JpkiAuth()
+            
+            // 1. まず、JPKI APを選択
+            jpki.selectAP(tag = tag)
+
+            // 2. 続いて、PINファイルを選択
+            jpki.selectPin(tag = tag)
+            
+            // 3. 残回数を確認しておく
+            // ロックされているとこのタイミングで NoVerifyCountRemainsExceptionが送出される
+            val remains = jpki.verifyCountRemains(tag = tag)
+
+            // 4. PINを照合する
+            // pinはDigitPin(4桁)
+            jpki.verifyPin(tag = tag, pin = pin)
+
+            // 5. 秘密鍵を選択する
+            jpki.selectCertificatePrivateKey(tag = tag)
+
+            // 6. 秘密鍵で署名する
+            // uri : 署名対象のファイル
+            val signature = contentResolver.openInputStream(uri!!)?.use {inputStream->
+                jpki.computeSignature(tag = tag, data = inputStream.readBytes())
+            }
+            createDocument.launch("signature.sig")?.let { contentResolver.openOutputStream(it) }?.use { outputStream->
+                outputStream.write(signature)
+                Log.i(TAG, "署名を保存しました")
+            }
+        }.getOrElse {
+            when(it){
+                is NoVerifyCountRemainsException ->{
+                    Log.i(TAG, "カードがロックされています")
+                }
+                is AdpuValidateException ->{
+                    Log.i(TAG, "カードとの通信に失敗しました")
+                }
+            }
+        }.also {
+            nfcCard.disableReaderMode(this)
+        }
+    }
+}.let { nfcCallback->
+    nfcCard.enableReaderMode(this, nfcCallback, NfcAdapter.FLAG_READER_NFC_B or NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK, null)
+}
+```
