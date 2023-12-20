@@ -1,7 +1,7 @@
 package com.milkcocoa.info.miena.jpki
 
 import android.nfc.Tag
-import com.milkcocoa.info.miena.MiinaJpki
+import com.milkcocoa.info.miena.protocol.jpki.MiinaJpki
 import com.milkcocoa.info.miena.adpu.Adpu
 import com.milkcocoa.info.miena.adpu.CommandAdpu
 import com.milkcocoa.info.miena.exception.NoVerifyCountRemainsException

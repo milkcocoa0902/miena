@@ -1,4 +1,4 @@
-package com.milkcocoa.info.miena
+package com.milkcocoa.info.miena.protocol
 
 import android.nfc.Tag
 import com.milkcocoa.info.miena.adpu.Adpu

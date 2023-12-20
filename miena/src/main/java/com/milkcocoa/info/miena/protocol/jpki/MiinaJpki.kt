@@ -1,7 +1,8 @@
-package com.milkcocoa.info.miena
+package com.milkcocoa.info.miena.protocol.jpki
 
 import android.nfc.Tag
 import com.milkcocoa.info.miena.pin.Pin
+import com.milkcocoa.info.miena.protocol.Miena
 import java.security.cert.X509Certificate
 
 /**
@@ -13,7 +14,7 @@ import java.security.cert.X509Certificate
 /**
  *
  */
-interface MiinaJpki<PIN : Pin> : Miena<PIN>{
+interface MiinaJpki<PIN : Pin> : Miena<PIN> {
     fun selectCertificatePublicKey(tag: Tag)
     fun readCertificatePublicKey(tag: Tag): X509Certificate
     fun computeSignature(tag: Tag, data: ByteArray): ByteArray

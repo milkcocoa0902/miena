@@ -2,7 +2,7 @@ package com.milkcocoa.info.miena.text.scope
 
 import android.nfc.Tag
 import android.util.Log
-import com.milkcocoa.info.miena.MienaTextBasicAttrs
+import com.milkcocoa.info.miena.protocol.text.MienaTextBasicAttrs
 import com.milkcocoa.info.miena.adpu.Adpu
 import com.milkcocoa.info.miena.adpu.CommandAdpu
 import com.milkcocoa.info.miena.entity.BasicAttrs

@@ -1,12 +1,10 @@
-package com.milkcocoa.info.miena
+package com.milkcocoa.info.miena.protocol.text
 
 import android.nfc.Tag
 import com.milkcocoa.info.miena.entity.BasicAttrs
 import com.milkcocoa.info.miena.entity.PersonalNumber
-import com.milkcocoa.info.miena.pin.ComplexPin
-import com.milkcocoa.info.miena.pin.DigitPin
-import com.milkcocoa.info.miena.pin.MyNumberPin
 import com.milkcocoa.info.miena.pin.Pin
+import com.milkcocoa.info.miena.protocol.Miena
 
 /**
  * Miina
@@ -17,7 +15,7 @@ import com.milkcocoa.info.miena.pin.Pin
 /**
  *
  */
-interface MienaText<PIN: Pin>: Miena<PIN>{
+interface MienaText<PIN: Pin>: Miena<PIN> {
     fun selectCertificate(tag: Tag)
     fun readCertificate(tag: Tag)
 
@@ -36,9 +34,3 @@ interface MienaText<PIN: Pin>: Miena<PIN>{
 
 }
 
-interface MienaTextNumber: MienaText<MyNumberPin>
-
-interface MienaTextBasicAttrs: MienaText<ComplexPin>
-
-interface MienaTextFull: MienaText<DigitPin>{
-}
