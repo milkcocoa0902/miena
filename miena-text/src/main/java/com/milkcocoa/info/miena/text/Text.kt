@@ -5,10 +5,14 @@ import android.util.Log
 import com.milkcocoa.info.miena.protocol.text.MienaText
 import com.milkcocoa.info.miena.adpu.Adpu
 import com.milkcocoa.info.miena.adpu.CommandAdpu
+import com.milkcocoa.info.miena.entity.BasicInfo
+import com.milkcocoa.info.miena.entity.CardSignature
 import com.milkcocoa.info.miena.pin.Pin
 import com.milkcocoa.info.miena.util.Extension.toByteArray
+import com.milkcocoa.info.miena.util.Extension.toHexString
 import com.milkcocoa.info.miena.util.IsoDepUtil.critical
 import com.milkcocoa.info.miena.util.IsoDepUtil.isoDep
+import kotlin.math.sign
 
 /**
  * TextSupport
@@ -24,8 +28,8 @@ abstract class Text<PIN: Pin>: MienaText<PIN> {
         selectEF(tag, byteArrayOf(0x00, 0x05))
     }
 
-    override fun readBasicInfo(tag: Tag) {
-        tag.isoDep().critical {isoDep->
+    override fun readBasicInfo(tag: Tag): BasicInfo {
+        return tag.isoDep().critical {isoDep->
             val adpu = Adpu(isoDep)
             val preloadAdpu = CommandAdpu(
                 CLA = 0x00,
@@ -45,18 +49,24 @@ abstract class Text<PIN: Pin>: MienaText<PIN> {
                 Le = preloadAdpuResult.asn1FrameIterator().next().frameSize.toByteArray()
             )
 
+            var apInfo = ""
+            var version = -1
+            var extAdpu = -1
+            var vendor = -1
+            var option = -1
+            var keyId = ""
             val readPersonalNumberResult = adpu.transceive(readBasicInfoAdpu)
             readPersonalNumberResult.asn1FrameIterator().forEach {
                 when(it.tag){
                     65 ->{
-                        Log.i("APINFO", it.value?.joinToString(separator = "") { eachByte -> "%02x".format(eachByte) } ?: "")
-                        Log.i("VERSION", it.value?.getOrNull(0)?.let { "%02X".format(it) } ?: "")
-                        Log.i("ExtADPU", it.value?.getOrNull(1)?.let { "%02X".format(it) } ?: "")
-                        Log.i("Vendor", it.value?.getOrNull(2)?.let { "%02X".format(it) } ?: "")
-                        Log.i("Option", it.value?.getOrNull(3)?.let { "%02X".format(it) } ?: "")
+                        it.value?.toHexString()?.apply { apInfo = this }
+                        it.value?.getOrNull(0)?.toInt()?.apply { version = this }
+                        it.value?.getOrNull(1)?.toInt()?.apply { extAdpu = this }
+                        it.value?.getOrNull(2)?.toInt()?.apply { vendor = this }
+                        it.value?.getOrNull(3)?.toInt()?.apply { option = this }
                     }
                     66 ->{
-                        Log.i("Key ID", it.value?.joinToString(separator = "") { eachByte -> "%02x".format(eachByte) } ?: "")
+                        it.value?.toHexString()?.apply { keyId = this }
                     }
                     else ->{
                         // ??????
@@ -64,6 +74,15 @@ abstract class Text<PIN: Pin>: MienaText<PIN> {
                     }
                 }
             }
+
+            return@critical BasicInfo(
+                apInfo = apInfo,
+                version = version,
+                extAdpu = extAdpu,
+                vendor = vendor,
+                option = option,
+                keyId = keyId
+            )
         }
     }
 
@@ -107,8 +126,8 @@ abstract class Text<PIN: Pin>: MienaText<PIN> {
         selectEF(tag, byteArrayOf(0x00, 0x03))
     }
 
-    override fun readSignature(tag: Tag) {
-        tag.isoDep().critical {isoDep->
+    override fun readSignature(tag: Tag) : CardSignature{
+        return tag.isoDep().critical {isoDep->
             val adpu = Adpu(isoDep)
 
             // 5byte読みの根拠がわからん。
@@ -132,16 +151,19 @@ abstract class Text<PIN: Pin>: MienaText<PIN> {
             )
             val certificateByteArray = adpu.transceive(readCertificateAdpu)
 
+            var mynumDigest = ""
+            var attrsDigest = ""
+            var sig = ""
             certificateByteArray.asn1FrameIterator().forEach {
                 when(it.tag){
                     49 ->{
-                        Log.i("MyNumberDigest", it.value?.joinToString(separator = "") { eachByte -> "%02x".format(eachByte) } ?: "")
+                        it.value?.toHexString()?.apply { mynumDigest = this }
                     }
                     50 ->{
-                        Log.i("AttrsDigest", it.value?.joinToString(separator = "") { eachByte -> "%02x".format(eachByte) } ?: "")
+                        it.value?.toHexString()?.apply { attrsDigest = this }
                     }
                     51 ->{
-                        Log.i("Signature", it.value?.joinToString(separator = "") { eachByte -> "%02x".format(eachByte) } ?: "")
+                        it.value?.toHexString()?.apply { sig = this }
                     }
                     else ->{
                         // ??????
@@ -149,6 +171,12 @@ abstract class Text<PIN: Pin>: MienaText<PIN> {
                     }
                 }
             }
+
+            return@critical CardSignature(
+                myNumberDigest = mynumDigest,
+                attrsDigest = attrsDigest,
+                signature = sig
+            )
         }
     }
 

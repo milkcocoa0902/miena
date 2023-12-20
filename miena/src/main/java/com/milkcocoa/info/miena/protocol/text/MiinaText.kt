@@ -2,6 +2,8 @@ package com.milkcocoa.info.miena.protocol.text
 
 import android.nfc.Tag
 import com.milkcocoa.info.miena.entity.BasicAttrs
+import com.milkcocoa.info.miena.entity.BasicInfo
+import com.milkcocoa.info.miena.entity.CardSignature
 import com.milkcocoa.info.miena.entity.PersonalNumber
 import com.milkcocoa.info.miena.pin.Pin
 import com.milkcocoa.info.miena.protocol.Miena
@@ -21,11 +23,11 @@ interface MienaText<PIN: Pin>: Miena<PIN> {
 
     fun selectSignature(tag: Tag)
 
-    fun readSignature(tag: Tag)
+    fun readSignature(tag: Tag): CardSignature
 
     fun selectBasicInfo(tag: Tag)
 
-    fun readBasicInfo(tag: Tag)
+    fun readBasicInfo(tag: Tag): BasicInfo
 
     fun selectPersonalNumber(tag: Tag)
     fun selectBasicAttrs(tag: Tag)

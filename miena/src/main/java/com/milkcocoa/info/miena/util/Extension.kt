@@ -46,5 +46,7 @@ object Extension {
             }
         }
     }
+
+    fun ByteArray.toHexString() = joinToString(separator = "") { eachByte -> "%02x".format(eachByte) }
 }
 
